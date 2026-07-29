@@ -1,12 +1,12 @@
 import os
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import declarative_base, sessionmaker
-from sqlalchemy import Column, Integer, String, Text
+from sqlalchemy import Column, Integer, String, Text, text
 from pgvector.sqlalchemy import Vector
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://user:pass@localhost/db")
 
-# Render ke database URL ko Async (asyncpg) format mein badalne ka logic
+# URL format correction for Render
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
 elif DATABASE_URL.startswith("postgresql://") and not DATABASE_URL.startswith("postgresql+asyncpg://"):
@@ -26,4 +26,6 @@ class ConversationMemory(Base):
 
 async def init_db():
     async with engine.begin() as conn:
+        # Yeh line automatic vector extension enable kar degi!
+        await conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector;"))
         await conn.run_sync(Base.metadata.create_all)
