@@ -34,7 +34,29 @@ async def on_startup():
     await init_db()
 
 def get_ai_response(prompt: str) -> str:
-    models = ["gemini/gemini-1.5-pro-latest", "openai/gpt-4o", "deepseek/deepseek-chat"]
+    # 🚀 Ultimate Fallback List (Gemini + DeepSeek + OpenAI)
+    models = [
+        # 1. Next-Gen Models (Fast & Maximum Free Tier)
+        "gemini/gemini-3.5-flash",
+        "gemini/gemini-3.1-flash-lite",
+        "gemini/gemini-2.5-flash",
+        "gemini/gemini-2.5-flash-lite",
+        
+        # 2. Reliable Fast Backups
+        "gemini/gemini-1.5-flash",
+        "deepseek/deepseek-chat",
+        "openai/gpt-4o-mini",
+        
+        # 3. Heavy/Smart Backups (For complex queries)
+        "gemini/gemini-1.5-pro",
+        "openai/gpt-4o",
+        "openai/gpt-4-turbo",
+        
+        # 4. Last Resort Backups
+        "openai/gpt-3.5-turbo",
+        "gemini/gemini-1.0-pro"
+    ]
+    
     for model in models:
         try:
             response = completion(
@@ -43,12 +65,13 @@ def get_ai_response(prompt: str) -> str:
                     {"role": "system", "content": KIYARA_MASTER_PROMPT},
                     {"role": "user", "content": prompt}
                 ],
-                timeout=7
+                timeout=7  # 7-second timeout for quick switching
             )
             return response.choices[0].message.content
         except Exception as e:
             print(f"Model {model} failed: {e}")
             continue
+            
     return "Maaf kijiye, network mein thodi samasya hai. Kya aap apna sawal dohra sakte hain?"
 
 def send_data_to_email(data: dict):
