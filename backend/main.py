@@ -66,9 +66,15 @@ def send_data_to_email(data: dict):
 @app.post("/whatsapp/webhook")
 async def whatsapp_webhook(request: Request, bg_tasks: BackgroundTasks):
     try:
-        data = await request.json()
+        payload = await request.json()
+        print("WAAPI PAYLOAD RECEIVED:", payload) # Error pakadne ke liye naya log
         
-        message_data = data.get("message", {})
+        # Waapi data structure fix
+        if "data" in payload and "message" in payload["data"]:
+            message_data = payload["data"]["message"]
+        else:
+            message_data = payload.get("message", {})
+            
         user_msg = message_data.get("body")
         user_phone = message_data.get("from")
         
@@ -85,13 +91,13 @@ async def whatsapp_webhook(request: Request, bg_tasks: BackgroundTasks):
             "Authorization": f"Bearer {os.getenv('WAAPI_API_TOKEN')}",
             "Content-Type": "application/json"
         }
-        payload = {
+        send_payload = {
             "chatId": user_phone,
             "message": reply
         }
         
         async with httpx.AsyncClient() as client:
-            await client.post(waapi_url, headers=headers, json=payload)
+            await client.post(waapi_url, headers=headers, json=send_payload)
             
         return {"status": "success", "ai_reply": reply}
     except Exception as e:
