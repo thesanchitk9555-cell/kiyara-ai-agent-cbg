@@ -4,7 +4,7 @@ services:
     name: kiyara-frontend
     env: node
     rootDir: frontend
-    plan: starter
+    plan: free
     buildCommand: npm install && npm run build
     startCommand: npm start
     envVars:
@@ -19,7 +19,7 @@ services:
     name: kiyara-backend
     env: python
     rootDir: backend
-    plan: starter
+    plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
@@ -35,7 +35,7 @@ services:
           name: kiyara-redis
           property: connectionString
 
-  # 3. Redis Cache (Error Fixed Here)
+  # 3. Redis Cache
   - type: redis
     name: kiyara-redis
     plan: free
@@ -44,6 +44,6 @@ services:
 databases:
   # 4. PostgreSQL with pgvector
   - name: kiyara-postgres
-    plan: starter
+    plan: free
     databaseName: kiyara_db
     user: kiyara_user
