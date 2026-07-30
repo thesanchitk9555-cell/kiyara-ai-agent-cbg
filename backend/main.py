@@ -78,8 +78,8 @@ def send_data_to_email(data: dict):
     html_content = f"<h3>New Data Collected by Kiyara AI</h3><p><strong>Phone:</strong> {data.get('phone')}</p><p><strong>Message:</strong> {data.get('message')}</p>"
     try:
         resend.Emails.send({
-            "from": "Kiyara AI <kiyara@yourcollege.edu>",
-            "to": "admin@college.edu",
+            "from": "Kiyara AI <kiyara@m.zevafly.com>",
+            "to": "sanchitk170@gmail.com",
             "subject": "New College Inquiry via AI Agent",
             "html": html_content
         })
@@ -120,7 +120,9 @@ async def whatsapp_webhook(request: Request, bg_tasks: BackgroundTasks):
         }
         
         async with httpx.AsyncClient() as client:
-            await client.post(waapi_url, headers=headers, json=send_payload)
+            waapi_res = await client.post(waapi_url, headers=headers, json=send_payload)
+            # 🚨 Asli bimari yahan pakdi jayegi
+            print("WAAPI SEND STATUS:", waapi_res.status_code, waapi_res.text)
             
         return {"status": "success", "ai_reply": reply}
     except Exception as e:
