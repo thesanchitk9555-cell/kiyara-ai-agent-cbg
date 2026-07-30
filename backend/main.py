@@ -108,8 +108,11 @@ async def whatsapp_webhook(request: Request, bg_tasks: BackgroundTasks):
         reply = get_ai_response(user_msg)
         bg_tasks.add_task(send_data_to_email, {"phone": user_phone, "message": user_msg})
         
+        # 🚀 SMART FIX: Automatically grab instance ID from the incoming message payload!
+        instance_id = payload.get("instanceId") or os.getenv("WAAPI_INSTANCE_ID")
+        
         # Waapi.app Send Message Action
-        waapi_url = f"https://waapi.app/api/v1/instances/{os.getenv('WAAPI_INSTANCE_ID')}/client/action/send-message"
+        waapi_url = f"https://waapi.app/api/v1/instances/{instance_id}/client/action/send-message"
         headers = {
             "Authorization": f"Bearer {os.getenv('WAAPI_API_TOKEN')}",
             "Content-Type": "application/json"
