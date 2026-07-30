@@ -9,10 +9,7 @@ services:
     startCommand: npm start
     envVars:
       - key: NEXT_PUBLIC_API_URL
-        fromService:
-          type: web
-          name: kiyara-backend
-          envVarKey: RENDER_EXTERNAL_URL
+        value: https://kiyara-backend-omhf.onrender.com
 
   # 2. Python Backend (FastAPI + VideoSDK + Gemini)
   - type: web
